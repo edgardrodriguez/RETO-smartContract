@@ -3,14 +3,15 @@ pragma solidity ^0.8.17;
 
 contract Desafio {
     uint private pin;
-    address owner;
+    address private owner;
     mapping(address => uint) balances;
 
     constructor(uint ownerPin){
         pin = ownerPin;
+        owner = msg.sender;
     }
 
-    function min(uint ownerPin, uint amount) public {
+    function min(uint ownerPin, uint amount) public onlyOwner{
         require(pin == ownerPin, "El pin no es correcto");
         balances[msg.sender] += amount;
         owner = msg.sender;
@@ -20,7 +21,7 @@ contract Desafio {
     // Esto significa que si el propietario llama a esta función, la función se ejecuta, pero en otros casos devolverá una excepción.
 
     modifier onlyOwner {
-        require(msg.sender == owner);
+        require(msg.sender == owner,"solo el usuario puede");
         _;
     }
 
@@ -35,5 +36,4 @@ contract Desafio {
         (bool success, )= msg.sender.call{value:balances[msg.sender]}("");
         require(success, "Transferencia fallida.");
     }
-}  
-
+}
